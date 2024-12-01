@@ -21,7 +21,7 @@ resource "aws_ecr_repository" "app_repo" {
 
 #Création d'un cluster ECS
 resource "aws_ecs_cluster" "app_cluster" {
-  name = var.ecs.cluster_name
+  name = var.ecs_cluster_name
 }
 
 # Création de la task définition ECS
