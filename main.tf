@@ -26,7 +26,7 @@ resource "aws_ecs_cluster" "app_cluster" {
 
 #Création de la task définition ECS
 resource "aws_ecs_task_definition" "app_task" {
-  family = var.ecs_task_family
+  family               = var.ecs_task_family
   container_definition = <<DENINITION
   [
     {
@@ -39,7 +39,7 @@ resource "aws_ecs_task_definition" "app_task" {
   ]
 
   DEFINITION
-  requires_compatibilities = ["FORGATE"]
+  requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   memory                   = "512"
   cpu                      = "256"
@@ -49,7 +49,7 @@ resource "aws_ecs_task_definition" "app_task" {
 #Création du service ECS
 resource "aws_ecs_service" "app_service" {
   name            = var.ecs_service_name
-  cluster         = aws_ecs_cluster.app_culter.id
+  cluster         = aws_ecs_cluster.app_cluster.id
   task_definition = aws_ecs_task_definition.app_task.arn
   launch_type     = "FARGATE"
 
@@ -61,7 +61,7 @@ resource "aws_ecs_service" "app_service" {
    desired_count = 1
 }
 
-#Role IAM pour ECS
+# Rôle IAM pour ECS
 resource "aws_iam_role" "ecs_task_execution" {
   name = "ecsTaskExecutionRole_sha"
 
@@ -71,17 +71,18 @@ resource "aws_iam_role" "ecs_task_execution" {
       {
         Effect = "Allow"
         Principal = {
-          Service = "ecs-task.amazonaws.com"
+          Service = "ecs-tasks.amazonaws.com"
         }
         Action = "sts:AssumeRole"
       }
     ]
-  })  
+  })
 }
 
+# Attachement de la politique IAM pour ECS
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_attachment" {
-        role               = aws_iam_role.ecs_task_execution.name
-        policy_arn         = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+  role       = aws_iam_role.ecs_task_execution.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
  
