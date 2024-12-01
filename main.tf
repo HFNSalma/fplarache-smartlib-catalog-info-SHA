@@ -24,10 +24,11 @@ resource "aws_ecs_cluster" "app_cluster" {
   name = var.ecs.cluster_name
 }
 
-#Création de la task définition ECS
+# Création de la task définition ECS
 resource "aws_ecs_task_definition" "app_task" {
   family               = var.ecs_task_family
-  container_definition = <<DENINITION
+
+  container_definitions = <<DEFINITION
   [
     {
       "name": "fplarache-smartlib-catalog-container-sha",
@@ -37,7 +38,6 @@ resource "aws_ecs_task_definition" "app_task" {
       "essential": true
     }
   ]
-
   DEFINITION
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
